@@ -1,20 +1,25 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="app">
   <head>
     <title>Google Sheets API Quickstart</title>
     <meta charset='utf-8' />
-    <script async defer src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
-    <script async defer src="/app.js"></script>
-    <script async defer src="/controllers.js"></script>
-    <script async defer src="/functions.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+    <script src="/app.js"></script>
   </head>
-  <p>Google Sheets API Quickstart</p>
+  <body ng-controller="controller">
+    <p>Google Sheets API Quickstart</p>
 
     <!--Add buttons to initiate auth sequence and sign out-->
-    <button id="authorize-button" style="display: none;">Authorize</button>
-    <button id="signout-button" style="display: none;">Sign Out</button>
+    <button id="authorize-button" ng-if="!isSignedIn" ng-click="handleAuthClick()">Authorize</button>
+    <button id="signout-button" ng-if="isSignedIn" ng-click="handleSignoutClick()">Sign Out</button>
 
-    <pre id="content"></pre>
+    <p ng-show="error">{{ error }}</p>
+
+    <table ng-if="isSignedIn" border="2">
+      <tr ng-repeat="row in sheet">
+        <td ng-repeat="cell in row">{{ cell }}</td>
+      </tr>
+    </table>
 
     <script type="text/javascript">
       // Client ID and API key from the Developer Console
@@ -26,9 +31,6 @@
       // Authorization scopes required by the API; multiple scopes can be
       // included, separated by spaces.
       var SCOPES = "https://www.googleapis.com/auth/spreadsheets.readonly";
-
-      var authorizeButton = document.getElementById('authorize-button');
-      var signoutButton = document.getElementById('signout-button');
 
       /**
        *  On load, called to load the auth2 library and API client library.
@@ -52,8 +54,6 @@
 
           // Handle the initial sign-in state.
           updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
-          authorizeButton.onclick = handleAuthClick;
-          signoutButton.onclick = handleSignoutClick;
         });
       }
     </script>
